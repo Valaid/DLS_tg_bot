@@ -23,15 +23,15 @@ from helped_classes import ContentLoss, StyleLoss, Normalization, gram_matrix
 
         
 class StyleTransferModel:
-    def __init__(device, cnn,normalization_mean, normalization_std,
+    def __init__(self, device, cnn, normalization_mean, normalization_std,
                  style_img, content_img,
                  content_layers=['conv_4'],
                  style_layers=['conv_1', 'conv_2', 'conv_3', 'conv_4', 'conv_5']):
         
         cnn = copy.deepcopy(cnn)
         self.device = device
-        style_img = self._peprocesses(style_img).to(self.device, torch.float)
-        content_img = self._peprocesses(content_img).to(self.device, torch.float)
+        style_img = self._preprocesses(style_img).to(self.device, torch.float)
+        content_img = self._preprocesses(content_img).to(self.device, torch.float)
 
         # normalization module
         normalization = Normalization(normalization_mean, normalization_std).to(device)
@@ -83,10 +83,10 @@ class StyleTransferModel:
 
         self.model = model[:(i + 1)]
         self.style_losses = style_losses
-        self.conten_losses = content_losses
+        self.content_losses = content_losses
     
         
-    def __call__(input_img, num_steps=500, style_weight=100000, content_weight = 1):
+    def __call__(self, input_img, num_steps=500, style_weight=100000, content_weight = 1):
         
         input_img = self._preprocesses(input_img).to(self.device,torch.float)
         optimizer = optim.LBFGS([input_img.requires_grad_()]) 
@@ -102,14 +102,14 @@ class StyleTransferModel:
 
                 optimizer.zero_grad()
 
-                model(input_img)
+                self.model(input_img)
 
                 style_score = 0
                 content_score = 0
 
-                for sl in style_losses:
+                for sl in self.style_losses:
                     style_score += sl.loss
-                for cl in content_losses:
+                for cl in self.content_losses:
                     content_score += cl.loss
                 
                 #взвешивание ощибки
@@ -135,7 +135,7 @@ class StyleTransferModel:
 
         return input_img
     
-    def _preprocesses(img):
+    def _preprocesses(self, img):
         imsize = 128
         loader = transforms.Compose([
             transforms.Resize(imsize),  # нормируем размер изображения
