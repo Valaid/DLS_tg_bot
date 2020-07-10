@@ -19,6 +19,7 @@ from Style_transfer_model import StyleTransferModel
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from config import States
+import torchvision.transforms as transforms
 
 # db_file = "database.vdb"
 
