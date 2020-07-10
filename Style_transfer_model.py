@@ -86,7 +86,7 @@ class StyleTransferModel:
         self.content_losses = content_losses
     
         
-    def __call__(self, input_img, num_steps=500, style_weight=100000, content_weight = 1):
+    async def __call__(self, input_img, num_steps=500, style_weight=100000, content_weight = 1):
         
         input_img = self._preprocesses(input_img).to(self.device,torch.float)
         optimizer = optim.LBFGS([input_img.requires_grad_()]) 
@@ -130,7 +130,6 @@ class StyleTransferModel:
 
             optimizer.step(closure)
 
-        # a last correction...
         input_img.data.clamp_(0, 1)
 
         return input_img

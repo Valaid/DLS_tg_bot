@@ -18,13 +18,12 @@ from aiogram.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButt
 from Style_transfer_model import StyleTransferModel
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
-from config import States
+from config import TOKEN, States
 import torchvision.transforms as transforms
 
 # db_file = "database.vdb"
 
 
-TOKEN = '1239115079:AAHB2lI3iB2K23fYVC9iZTtRp1XFCp0IWUE'
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 
@@ -90,7 +89,7 @@ async def get_context(message: types.Message, state: FSMContext):
     model = StyleTransferModel(device,cnn,cnn_normalization_mean, cnn_normalization_std, image1, image2)
     img = image3
     unloader = transforms.ToPILImage()
-    img = model(img)
+    img = await model(img)
     img2 = unloader(img.squeeze(0))
     bio = BytesIO()
     bio.name = 'image.jpeg'
